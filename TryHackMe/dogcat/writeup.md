@@ -100,7 +100,7 @@ that I can use against the web application. <br>
 | `php://filter/convert.base64-encode/resource=index.php` | Display index.php as a base64 encoded string |
 
 One of the payloads listed in `Wrappers.md` is the PHP filter shown above. <br>
-I can use this filter to retrieve the contents of `flag.php` and `index.php` as base64 encoded data.
+I used this filter to retrieve the contents of `flag.php` and `index.php` as base64 encoded data.
 
 <p align="center">
   <img src="./assets/10.png">
@@ -158,27 +158,30 @@ After decoding it with [CyberChef](https://gchq.github.io/CyberChef/), its conte
 
 </html>
 ```
-
 This reveals a hidden parameter named `ext`. <br>
-> What it does is it checks if `view` has been assigned a value such as `?view=cat`, when true, it calls the containsStr() function
-> which is used to check if `view` contains a specific string. <br>
-> 
-> Inside the function containsStr(), `return strpos($str, $substr) !== false;` strpos returns `false` if $substr cannot be found inside $str. <br>
-> This function is used from the line `if(containsStr($_GET['view'], 'dog') || containsStr($_GET['view'], 'cat'))` which checks if
-> `view` contains the words "dog" or "cat".
->
-> Therefore, the web app would print "Sorry, only dogs or cats are allowed." when the function returns false.
-> Otherwise, it returns the index where $substr starts inside $str. <br>
-> 
-> Using `?view=/var/www/html/cat/../` bypasses the filter as the function containsStr() would not return false since "dog" or "cat"
-> can be found inside `/var/www/html/cat/../`.
->
-> For the hidden paramter `ext`, `$ext = isset($_GET["ext"]) ? $_GET["ext"] : '.php';` this means if `ext` is not assigned any
-> value, $ext would become `.php` by default.
->
-> This is why using `?view=/var/www/html/cat/../../../../etc/passwd` does not work because of the line <br>
-> `include $_GET['view'] . $ext;` as it would concatenate `view` with `ext` resulting with: <br>
-> `include /var/www/html/cat/../../../../etc/passwd.php`
+
+<details>
+  <summary>Click to expand details</summary>
+  What it does is it checks if `view` has been assigned a value such as `?view=cat`, when true, it calls the containsStr() function
+  which is used to check if `view` contains a specific string. <br>
+  
+  Inside the function containsStr(), `return strpos($str, $substr) !== false;` strpos returns `false` if $substr cannot be found inside $str. <br>
+  This function is used from the line `if(containsStr($_GET['view'], 'dog') || containsStr($_GET['view'], 'cat'))` which checks if
+  `view` contains the words "dog" or "cat".
+  
+  Therefore, the web app would print "Sorry, only dogs or cats are allowed." when the function returns false.
+  Otherwise, it returns the index where $substr starts inside $str. <br>
+  
+  Using `?view=/var/www/html/cat/../` bypasses the filter as the function containsStr() would not return false since "dog" or "cat"
+  can be found inside `/var/www/html/cat/../`.
+  
+  For the hidden parameter `ext`, `$ext = isset($_GET["ext"]) ? $_GET["ext"] : '.php';` this means if `ext` is not assigned any
+  value, $ext would become `.php` by default.
+  
+  This is why using `?view=/var/www/html/cat/../../../../etc/passwd` does not work because of the line <br>
+  `include $_GET['view'] . $ext;` as it would concatenate `view` with `ext` resulting with: <br>
+  `include /var/www/html/cat/../../../../etc/passwd.php`
+</details>
 
 <p align="center">
   <img src="./assets/13.png">
@@ -263,7 +266,7 @@ Looking at the current user's privileges, I can run the binary `/usr/bin/env` wi
   <img src="./assets/22.png">
 </p>
 
-Visiting [GTFOBins: env](https://gtfobins.org/gtfobins/env/), which is a collection of Unix bineries that can be abused when misconfigured. <br>
+Visiting [GTFOBins: env](https://gtfobins.org/gtfobins/env/), which is a collection of Unix binaries that can be abused when misconfigured. <br>
 Filtering for `env`, it shows that I can spawn a shell using env:
 ```bash
 env /bin/sh
@@ -283,7 +286,7 @@ with the command above and retrieve the third flag.
 
 ## Obtaining `flag 4`
 
-Since the machine already hinted out that I am inside a docker container, the next thing to do is to find a way to escape the container.
+Since the machine already hinted that I am inside a docker container, the next thing to do is to find a way to escape the container.
 
 <p align="center">
   <img src="./assets/24.png">
